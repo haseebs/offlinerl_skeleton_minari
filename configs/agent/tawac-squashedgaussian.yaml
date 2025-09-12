@@ -1,0 +1,12 @@
+defaults:
+  - actor: squashed_gaussian
+  - critic: qv_net
+  - buffer: basic_buffer
+  - _self_
+
+name: tawac
+
+gamma: 0.99
+alpha: 1.0 # entropy
+entropic_index: 0
+store_old_policy: False

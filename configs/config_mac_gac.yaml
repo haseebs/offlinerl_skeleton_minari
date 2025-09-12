@@ -1,0 +1,29 @@
+defaults:
+  - db: credentials-rlaidb
+  - schema: default-schema
+  - agent: greedyac
+  - env: gym-mountaincar-continuous
+  - override hydra/launcher: joblib
+  - override hydra/job_logging: default
+  - _self_
+
+
+run: 4000
+db_prefix: hshah1
+db_name: 335_gac_policy_evolution
+seed: 1337
+steps: 100000
+learning_starts: 0
+evaluation_steps: 10000 # evaluate every x steps
+evaluation_episodes: 3 # how many episodes we want to avg over
+n_threads: 1
+device: cpu # or cuda
+
+# do a sweep with these settings by doing python main.py -m
+hydra:
+# mode: MULTIRUN
+ launcher:
+   n_jobs: 11
+ sweeper:
+   params:
+     agent/actor: gaussian, q_gaussian, heavytailed_gaussian

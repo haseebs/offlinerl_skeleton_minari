@@ -1,0 +1,13 @@
+gymnasium_robotics
+numpy
+hydra-core
+minari[all]
+torchrl
+mysql-connector-python
+jaxtyping
+torch
+rich
+gymnasium[mujoco]
+mujoco
+hydra-joblib-launcher
+hydra-submitit-launcher

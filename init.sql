@@ -1,0 +1,2 @@
+GRANT ALL PRIVILEGES ON *.* TO 'lingwei'@'%' IDENTIFIED BY 'Taskforce141.com';
+FLUSH PRIVILEGES;

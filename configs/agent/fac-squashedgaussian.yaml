@@ -1,0 +1,16 @@
+defaults:
+  - actor: squashed_gaussian
+  - critic: qv_net
+  - buffer: basic_buffer
+  - _self_
+
+name: fac
+
+gamma: 0.99
+alpha: 1.0 
+logq_entropic_index: 0
+expq_entropic_index: 0
+fname: 'jeffrey'
+num_terms: 3
+ratio_eps: 0.2
+store_old_policy: False

@@ -1,0 +1,110 @@
+# login to docker using the following command and then push
+# docker login -u "myusername" -p "mypassword" docker.io
+# docker push myusername/myimage:0.0.1
+
+services:
+  train:
+    build: .  # Build the Docker image from the Dockerfile in this directory
+    image: d4rl-mujoco210:built
+    environment:
+    - DB_HOST=${DB_HOST}
+    - DB_NAME=${DB_NAME}
+    - DB_USER=${DB_USER}
+    - DB_PASSWORD=${DB_PASSWORD}
+    - HYDRA_DB=${HYDRA_DB}
+    # - LD_LIBRARY_PATH=/root/.mujoco/mujoco210/bin:/root/.mujoco/mujoco210/:$LD_LIBRARY_PATH
+    depends_on:
+      - mysql 
+    mem_limit: 4g
+    cpus: 2
+    volumes:
+      # - ~/.d4rl:/root/.d4rl         # d4rl datasets are typically stored in ~/.d4rl,  
+                                    # run get_all_datasets.py to download all datasets before running the main.py
+      # - ~/.mujoco:/root/.mujoco     # Mount the mujoco license key to the container  
+      
+      - ./main.py:/app/main.py         # Mount local `train.py` to container `/app/train.py`
+      - ./agents:/app/agents         
+      - ./models:/app/models         
+      - ./experiment:/app/experiment         
+      - ./configs:/app/configs         
+      - ./environments:/app/environments        
+      - ./utils:/app/utils        
+      - ./notebooks:/app/notebooks         
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # run on the first time of creating mysql data,
+                                                        # if want to enforce running docker volume rm <>, found by docker volume ls
+    command: ["python", "main.py", "-m"]  # Command to run the training script
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    # healthcheck:
+      # test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      # interval: 10s
+      # timeout: 5s
+      # retries: 5      
+
+volumes:
+  mysql_data:
+
+
+# services:
+#   mysql:
+#     image: mysql:8.0
+#     environment:
+#       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+#       MYSQL_DATABASE: ${DB_NAME}
+#       MYSQL_USER: ${DB_USER}
+#       MYSQL_PASSWORD: ${DB_PASSWORD}
+#     ports:
+#       - "3306:3306"
+#     volumes:
+#       - mysql_data:/var/lib/mysql
+#     healthcheck:
+#       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5      
+
+#   train:
+#     build: .  # Build the Docker image from the Dockerfile in this directory
+#     image: d4rl-mujoco210:built
+#     environment:
+#     - DB_HOST=${DB_HOST}
+#     - DB_NAME=${DB_NAME}
+#     - DB_USER=${DB_USER}
+#     - DB_PASSWORD=${DB_PASSWORD}
+#     # - LD_LIBRARY_PATH=/root/.mujoco/mujoco210/bin:/root/.mujoco/mujoco210/:$LD_LIBRARY_PATH
+#     depends_on:
+#       mysql:
+#       condition: service_healthy
+#     mem_limit: 4g
+#     cpus: 2
+#     volumes:
+#       # - ~/.d4rl:/root/.d4rl         # d4rl datasets are typically stored in ~/.d4rl,  
+#                                     # run get_all_datasets.py to download all datasets before running the main.py
+#       # - ~/.mujoco:/root/.mujoco     # Mount the mujoco license key to the container  
+      
+#       - ./main.py:/app/main.py         # Mount local `train.py` to container `/app/train.py`
+#       - ./agents:/app/agents         # Mount local `agents/` to container `/app/agents`
+#       - ./models:/app/models         # Mount local `models/` to container `/app/models`
+#       - ./experiment:/app/experiment         # Mount local `experiments/` to container `/app/experiments`
+#       - ./configs:/app/configs         # Mount local `configs/` to container `/app/configs`
+#       - ./environments:/app/environments         # Mount local `environments/` to container `/app/environments`
+#       - ./utils:/app/utils         # Mount local `utils/` to container `/app/utils`
+#       - ./notebooks:/app/notebooks         # Mount local `notebooks/` to container `/app/notebooks`
+#     command: ["python", "-u", "main.py", "-m"]  # Command to run the training script
+
+
+# volumes:
+#   mysql_data:
+
+
+    

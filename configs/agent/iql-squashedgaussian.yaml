@@ -1,0 +1,12 @@
+defaults:
+  - actor: squashed_gaussian
+  - critic: qv_net
+  - buffer: basic_buffer
+  - _self_
+
+name: iql
+
+gamma: 0.99
+alpha: 0.33 # entropy
+expectile: 0.8
+store_old_policy: False

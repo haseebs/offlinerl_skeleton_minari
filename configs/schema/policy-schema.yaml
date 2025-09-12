@@ -1,0 +1,39 @@
+errors:
+  columns:
+    run: 0
+    step: 0
+    mse: 0.0
+  primary_keys: [run,step]
+
+returns:
+  columns:
+    run: 0
+    step: 0
+    episode: 0
+    reward: 0
+    reward_normalized: 0
+  primary_keys: [run,step]
+
+policy:
+  columns:
+    run: 0
+    step: 0
+    episode: 0
+    policy_means: []
+    policy_stds: []
+    dof: []
+  primary_keys: [run,step]
+
+summary:
+  columns:
+    run: 0
+    step: 0
+    episode: 0
+    auc100: 0
+    norm_auc100: 0
+    auc50: 0
+    norm_auc50: 0
+    auc10: 0
+    norm_auc10: 0
+    time_taken: 0.0
+  primary_keys: [run]

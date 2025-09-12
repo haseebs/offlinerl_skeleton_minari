@@ -1,0 +1,37 @@
+defaults:
+  - db: credentials-local
+  - schema: policy-schema
+  - agent: iql-squashedgaussian
+  # - agent: sql-gaussian
+  # - env: hopper-expert
+  # - agent/sweepers@hydra.sweeper.params: base_sweeper
+  - override hydra/launcher: joblib
+  - override hydra/job_logging: default
+  - _self_
+
+
+run: 0
+# db_prefix: lingwei
+db_prefix: haseebs
+# db_name: d4rl_sql_gaussian
+db_name: iql_antmaze_1
+env: D4RL/antmaze/umaze-v1
+seed: 1337
+steps: 1000000
+learning_starts: 0
+evaluation_steps: 10000 # evaluate every x steps
+evaluation_episodes: 5 # how many episodes we want to avg over
+n_threads: 2
+offline: True
+device: cpu # or cuda
+
+# # # do a sweep with these settings by doing python main.py -m
+hydra:
+  #mode: MULTIRUN
+  launcher:
+    n_jobs: 12
+  sweeper:
+    params:
+      seed: range(0,5)
+      #env: glob(*)
+      # agent/actor: glob(*) # sweep over all policies

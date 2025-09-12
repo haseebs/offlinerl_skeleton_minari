@@ -1,0 +1,33 @@
+defaults:
+  - db: credentials-rlaidb
+  - schema: policy-schema
+  - agent: fac-squashedgaussian
+  - agent/sweepers@hydra.sweeper.params: base_sweeper
+  - override hydra/launcher: joblib
+  - override hydra/job_logging: default
+  - _self_
+
+
+run: 1000
+db_prefix: hshah1
+db_name: 817_minari_door_fac_sweep
+env: "D4RL/door/cloned-v2"
+seed: 1337
+steps: 1000000
+learning_starts: 0
+evaluation_steps: 10000 # evaluate every x steps
+evaluation_episodes: 5 # how many episodes we want to avg over
+n_threads: 1
+param_save_steps: 1000
+param_stop_steps: 250000
+device: cpu # or cuda
+
+# # # do a sweep with these settings by doing python main.py -m
+hydra:
+  #mode: MULTIRUN
+  launcher:
+    n_jobs: 20
+  sweeper:
+    params:
+      seed: range(0,5)
+      # agent/actor: glob(*) # sweep over all policies

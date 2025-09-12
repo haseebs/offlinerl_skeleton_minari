@@ -1,0 +1,18 @@
+defaults:
+  - actor: squashed_gaussian
+  - critic: qv_net
+  - buffer: basic_buffer
+  - _self_
+
+name: inac
+
+gamma: 0.99
+alpha: 0.1
+expectile: 0.8
+sample_random_times: 1
+noise: True
+vanilla: True
+noise_std: 0.1
+log_loss: True
+loss_temp: 1.0
+store_old_policy: False
