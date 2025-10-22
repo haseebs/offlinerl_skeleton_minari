@@ -1,6 +1,6 @@
 import torch
-import gym
-from gym.spaces.utils import flatdim
+import gymnasium
+from gymnasium.spaces.utils import flatdim
 from .experience_replay import ExperienceReplay
 from .torch_buffer import TorchBuffer
 from .rollout_buffer import TorchRolloutBuffer
@@ -9,10 +9,11 @@ def get_buffer(cfg: dict,
                seed: int,
                env: object,
                device: torch.device) -> ExperienceReplay:
-    if isinstance(env, gym.Env):
+    if isinstance(env, gymnasium.Env):
         state_dim = env.observation_space.shape
         action_dim = env.action_space.shape
         action_space = env.action_space
+        print(state_dim, action_dim, action_space)
     else:
         raise NotImplementedError
 

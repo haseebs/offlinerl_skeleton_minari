@@ -21,6 +21,7 @@ from models.critic import get_critic
 from models.replay_buffers.minari_buffer_wrapper import MinariBufferWrapper
 from agents.factory import get_agent
 from environments.get_dataset import load_dataset, training_set_construction
+from models.replay_buffers.factory import get_buffer
 from gymnasium.wrappers import RecordVideo
 
 import minari
@@ -50,24 +51,45 @@ def main(cfg: DictConfig) -> None:
     torch.set_num_threads(cfg.n_threads)
     utils.set_seed(cfg.seed)
 
-    # loading the buffer using torchrl
-    buffer = MinariBufferWrapper(
-            dataset_id=cfg.env,
-            batch_size=cfg.agent.buffer.batch_size,
-            download=True
-            )
 
-    # loading the dataset here once again
-    # 1) so we can recover the correct environments.
-    # 2) to get access to get_normalized_score
-    # I wonder whether we can somehow access the dataset
-    # object from the MinariExperienceReplay
-    dataset = minari.load_dataset(cfg.env, download=True)
-    dataset.set_seed(seed=cfg.seed)
+
+    dataset = minari.load_dataset(cfg.env)
+
+    obs_list, act_list, r_list, next_obs_list, done_list = [], [], [], [],[]
+    for ep in dataset.iterate_episodes():
+        o = ep.observations
+        a = ep.actions
+        r = ep.rewards
+        term = getattr(ep, "terminations", None)
+        trunc = getattr(ep, "truncations", None)
+        d = term | trunc
+        next_o = o[1:]
+        obs_list.append(o[:-1])
+        act_list.append(a)
+        r_list.append(r)
+        next_obs_list.append(next_o)
+        done_list.append(d)
+    observations = np.concatenate(obs_list, axis=0).astype(np.float32)
+    actions = np.concatenate(act_list, axis=0).astype(np.float32)
+    rewards = np.concatenate(r_list, axis=0).astype(np.float32)
+    next_observations = np.concatenate(next_obs_list, axis=0).astype(np.float32)
+    dones = np.concatenate(done_list, axis=0).astype(np.float32)
+
+
+
     env = dataset.recover_environment()
     test_env = dataset.recover_environment(eval_env=True)
     env.reset(seed=cfg.seed)
     test_env.reset(seed=cfg.seed)
+
+    buffer = get_buffer(cfg.agent.buffer, cfg.seed, env.env, cfg.device)
+    for idx in range(len(observations)):
+        """flip the terminating conditions so in the update only mask_batch needs to be used"""
+        buffer.push(state=observations[idx],
+                    action=actions[idx],
+                    reward=rewards[idx],
+                    next_state=next_observations[idx],
+                    done=1-dones[idx])
 
     """
     test_env.unwrapped.render_mode = 'rgb_array'
@@ -87,9 +109,6 @@ def main(cfg: DictConfig) -> None:
     parameters from algorithms with the same seed are compared, e.g. seed=0
     """
     # policy_param_states, _, _, _, _ = buffer.sample(batch_size=10)
-
-
-
 
     step = 0
     all_rewards = []

@@ -12,10 +12,10 @@ defaults:
 
 run: 0
 # db_prefix: lingwei
-db_prefix: haseebs
+db_prefix: hshah1
 # db_name: d4rl_sql_gaussian
-db_name: iql_antmaze_1
-env: D4RL/antmaze/umaze-v1
+db_name: 850_iql_walker2d_test
+env: mujoco/walker2d/expert-v0
 seed: 1337
 steps: 1000000
 learning_starts: 0

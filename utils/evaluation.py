@@ -20,6 +20,7 @@ ANTMAZE_EXPERT_SCORE = 1
 
 
 def get_normalized_score(env_name, minari_dataset, reward):
+    return reward
     try:
         return minari.get_normalized_score(minari_dataset, reward)
     except:
