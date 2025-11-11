@@ -98,6 +98,7 @@ def evaluate_episodic(env, agent, episodes, seed, step, env_name, minari_dataset
     """
     log performance as percentage of the original data collecting agent
     """
+    log.info(f"Episode rewards: {epsiode_rewards}, lengths: {episode_lengths}")
     normalized = np.array([get_normalized_score(env_name, minari_dataset, ep_r) for ep_r in epsiode_rewards])
     mean_normalized = np.mean(normalized)
     max_normalized = np.max(normalized)

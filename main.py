@@ -25,6 +25,7 @@ from models.replay_buffers.factory import get_buffer
 from gymnasium.wrappers import RecordVideo
 
 import minari
+from torch.utils.data import DataLoader
 
 log = logging.getLogger(__name__)
 

@@ -79,6 +79,7 @@ class SquashedGaussian(nn.Module):
             self.act = torch.tanh
         else:
             raise ValueError(f"unknown activation function {activation}")
+        
 
     def forward(self, state):
         """
@@ -105,6 +106,7 @@ class SquashedGaussian(nn.Module):
         if self.clip_stddev:
             log_std = torch.clamp(log_std, min=-self.clip_std_threshold,
                                   max=self.clip_std_threshold)
+            
         return mean, log_std
 
     def sample(self, state, num_samples=1):

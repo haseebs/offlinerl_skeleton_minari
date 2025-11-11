@@ -193,6 +193,8 @@ class qHeavyTailedGaussian(nn.Module):
         mean, shape = self.forward(states)
         hvbg = HeavyTailedBetaGaussian(mean, shape, entropic_index=self.entropic_index)
         actions = hvbg.rsample(sample_shape=(num_samples,))     
+        actions = actions.view((actions.shape[0], 1))
+        # actions = actions.squeeze(-1)
         # if num_samples == 1:
         #     actions = actions.squeeze(0)
         actions = torch.clamp(actions, self.action_min, self.action_max)
@@ -206,7 +208,10 @@ class qHeavyTailedGaussian(nn.Module):
     def sample(self, states, num_samples=1, deterministic=False):
         mean, shape = self.forward(states)
         hvbg = HeavyTailedBetaGaussian(mean, shape, entropic_index=self.entropic_index)
+        # from IPython import embed; embed()
         actions = hvbg.sample((num_samples,))
+        actions = actions.view((actions.shape[0], 1))
+        # actions = actions.squeeze(-1)
         # if num_samples == 1:
         #     actions = actions.squeeze(0)
         actions = torch.clamp(actions, self.action_min, self.action_max)            

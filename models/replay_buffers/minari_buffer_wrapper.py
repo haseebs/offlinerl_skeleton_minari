@@ -54,7 +54,6 @@ class MinariBufferWrapper:
         done = 1 - torch.logical_or(samples['next']['terminated'],
                                     samples['next']['truncated']).float()
 
-
         return state, action, reward, next_state, done
 
     def __len__(self) -> int:
